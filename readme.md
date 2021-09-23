@@ -1,6 +1,6 @@
 # Spring PetClinic Sample Application [![Build Status](https://travis-ci.org/spring-projects/spring-petclinic.png?branch=main)](https://travis-ci.org/spring-projects/spring-petclinic/)
 
-** TEST **
+** TEST 2 **
 
 ## Understanding the Spring Petclinic application with a few diagrams
 
