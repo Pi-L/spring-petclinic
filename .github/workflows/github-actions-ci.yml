@@ -39,16 +39,28 @@ jobs:
           java-version: "11"
           distribution: "adopt"
           cache: maven
+
       - name: Build with Maven
         run: mvn clean install -DskipTests
       - name: check JAR exist
         run: test -f ./target/spring-petclinic*.jar
 
+      - uses: actions/upload-artifact@v2
+        with:
+          name: petjar
+          path: ./target/spring-petclinic-2.5.0-SNAPSHOT.jar
+
   deploy:
-    needs: [build, cache]
+    needs: [build, test]
     runs-on: ubuntu-latest
     steps:
-      - uses: jfrog/setup-jfrog-cli@v1
+      - name: get jar file cache
+      - uses: actions/download-artifact@v2
+        with:
+          name: petjar
+
+      - uses: jfrog/setup-jfrog-cli@v2
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
-      - run: jfrog rt ping
+
+      - run: jfrog rt u spring-petclinic-2.5.0-SNAPSHOT.jar pet-klinik
