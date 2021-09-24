@@ -50,7 +50,7 @@ jobs:
           name: petjar
           path: ./target/spring-petclinic-2.5.0-SNAPSHOT.jar
 
-  release:
+  save_on_artifactory:
     needs: [build, test]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
