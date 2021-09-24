@@ -42,4 +42,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
       - name: check JAR exist
-        run: test -f ./target/spring-petcliniK*.jar
+        run: test -f ./target/spring-petclinic*.jar
+
+  deploy:
+    needs: [build, cache]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jfrog/setup-jfrog-cli@v1
+      env:
+        JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
+      - run: jfrog rt ping
