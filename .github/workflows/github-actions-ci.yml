@@ -42,4 +42,4 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
       - name: check JAR exist
-        run: test -f ./target/spring-petclinic*.jar
+        run: test -f ./target/spring-petcliniK*.jar
