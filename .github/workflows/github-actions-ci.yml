@@ -13,6 +13,7 @@ jobs:
           cache: maven
       - name: cache with maven
         run: mvn dependency:go-offline
+
   test:
     needs: cache
     runs-on: ubuntu-latest
@@ -40,3 +41,4 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn clean install -DskipTests
+        run: test -f ./target/spring-petclinic*.jar
