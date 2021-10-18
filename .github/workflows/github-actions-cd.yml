@@ -1,7 +1,10 @@
 name: GitHub Actions CD
 on:
+  push:
+    tags:
+      - '*'
   workflow_dispatch:
-  push: tags
+
 jobs:
   set_variables:
     runs-on: ubuntu-latest
