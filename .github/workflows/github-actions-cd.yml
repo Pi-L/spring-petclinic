@@ -1,5 +1,7 @@
 name: GitHub Actions CD
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push: tags
 jobs:
   download_from_artifactory:
     runs-on: ubuntu-latest

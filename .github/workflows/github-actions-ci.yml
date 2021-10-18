@@ -1,6 +1,19 @@
 name: GitHub Actions CI
 on: workflow_dispatch
 jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      build_name: ${{ steps.setbuildname.outputs.build_name }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Env Variables
+        run: |
+          echo "SHORT_SHA=`git rev-parse --short=8 HEAD`" >> $GITHUB_ENV
+          echo "SHORT_BRANCH_NAME=`echo ${GITHUB_REF##*/}`" >> $GITHUB_ENV
+      - id: setbuildname
+        run: echo "::set-output name=build_name::build_${SHORT_BRANCH_NAME}_${SHORT_SHA}"
+
   cache:
     runs-on: ubuntu-latest
     steps:
@@ -29,7 +42,7 @@ jobs:
         run: mvn test
 
   build:
-    needs: cache
+    needs: [cache, set_variables]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -51,7 +64,7 @@ jobs:
           path: ./target/spring-petclinic-2.5.0-SNAPSHOT.jar
 
   save_on_artifactory:
-    needs: [build, test]
+    needs: [build, test, set_variables]
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     steps:
@@ -64,4 +77,4 @@ jobs:
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
 
-      - run: jfrog rt u spring-petclinic-2.5.0-SNAPSHOT.jar pet-klinik
+      - run: jfrog rt u spring-petclinic-2.5.0-SNAPSHOT.jar "pet-klinik/${{ needs.set_variables.outputs.build_name }}.jar"
