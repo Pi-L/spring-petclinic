@@ -3,15 +3,43 @@ on:
   workflow_dispatch:
   push: tags
 jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      build_name: ${{ steps.setbuildname.outputs.build_name }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create Env Variables
+        run: |
+          echo "SHORT_SHA=`git rev-parse --short=8 HEAD`" >> $GITHUB_ENV
+          echo "SHORT_BRANCH_NAME=`echo ${GITHUB_REF##*/}`" >> $GITHUB_ENV
+      - id: setbuildname
+        run: echo "::set-output name=build_name::build_${SHORT_BRANCH_NAME}_${SHORT_SHA}"
+
   download_from_artifactory:
+    needs: [set_variables]
     runs-on: ubuntu-latest
     steps:
       - uses: jfrog/setup-jfrog-cli@v2
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
 
-      - run: jfrog rt dl --sort-by=created --sort-order=desc --limit=1 pet-klinik latest-release.jar
+      - run: jfrog rt dl "pet-klinik/${{ needs.set_variables.outputs.build_name }}.jar"
       - run: ls -la
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tagged_release
+          path: ./"${{ needs.set_variables.outputs.build_name }}.jar"
+
+    copy_new_jar:
+      needs: [set_variables, download_from_artifactory]
+      runs-on: ubuntu-latest
+      steps:
+        - name: get jar file cache
+          uses: actions/download-artifact@v2
+          with:
+            name: tagged_release
 
       - name: copy file via scp
         uses: appleboy/scp-action@master
@@ -20,9 +48,11 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           port: 22
           key: ${{ secrets.PEM }}
-          source: "./latest-release.jar"
+          source: "./${{ needs.set_variables.outputs.build_name }}.jar"
           target: "test"
 
+    restart_service:
+      needs: [set_variables, copy_new_jar]
       - name: restart service
         uses: appleboy/ssh-action@master
         with:
@@ -30,4 +60,9 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           key: ${{ secrets.PEM }}
           port: 22
-          script: sudo service petclinic restart
+          script: |
+                    sudo service petclinic@groupe1 stop
+                    sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
+                    sud service start
+
+      
