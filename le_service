@@ -1,0 +1,16 @@
+sudo vim /etc/systemd/system/petclinic.service
+
+[Unit]
+Description=PetClinic Spring Boot application service
+
+[Service]
+User=vagrant
+ExecStart=/usr/bin/java -jar /vagrant/data/spring-petclinic-2.5.0-SNAPSHOT.jar
+ExitStatus=143
+
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
