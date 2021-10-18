@@ -8,7 +8,6 @@ jobs:
         env:
           JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
 
-      - run: jfrog rt u spring-petclinic-2.5.0-SNAPSHOT.jar pet-klinik
       - run: jfrog rt dl --sort-by=created --sort-order=desc --limit=1 pet-klinik latest-release.jar
       - run: echo ${{ secrets.PEM }} > ./key.pem
       - run: scp -i ./key.pem latest-release.jar group1@cda.cefim-formation.org:~/test/
