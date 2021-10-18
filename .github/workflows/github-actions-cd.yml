@@ -32,37 +32,37 @@ jobs:
           name: tagged_release
           path: ./"${{ needs.set_variables.outputs.build_name }}.jar"
 
-    copy_new_jar:
-      needs: [set_variables, download_from_artifactory]
-      runs-on: ubuntu-latest
-      steps:
-        - name: get jar file cache
-          uses: actions/download-artifact@v2
-          with:
-            name: tagged_release
-
-      - name: copy file via scp
-        uses: appleboy/scp-action@master
+  copy_new_jar:
+    needs: [set_variables, download_from_artifactory]
+    runs-on: ubuntu-latest
+    steps:
+      - name: get jar file cache
+        uses: actions/download-artifact@v2
         with:
-          host: ${{ secrets.SERVER_URL }}
-          username: ${{ secrets.SERVER_LOGIN }}
-          port: 22
-          key: ${{ secrets.PEM }}
-          source: "./${{ needs.set_variables.outputs.build_name }}.jar"
-          target: "test"
+          name: tagged_release
 
-    restart_service:
-      needs: [set_variables, copy_new_jar]
-      - name: restart service
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_URL }}
-          username: ${{ secrets.SERVER_LOGIN }}
-          key: ${{ secrets.PEM }}
-          port: 22
-          script: |
-                    sudo service petclinic@groupe1 stop
-                    sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
-                    sud service start
+    - name: copy file via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SERVER_URL }}
+        username: ${{ secrets.SERVER_LOGIN }}
+        port: 22
+        key: ${{ secrets.PEM }}
+        source: "./${{ needs.set_variables.outputs.build_name }}.jar"
+        target: "test"
+
+  restart_service:
+    needs: [set_variables, copy_new_jar]
+    - name: restart service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_URL }}
+        username: ${{ secrets.SERVER_LOGIN }}
+        key: ${{ secrets.PEM }}
+        port: 22
+        script: |
+                  sudo service petclinic@groupe1 stop
+                  sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
+                  sud service start
 
       
