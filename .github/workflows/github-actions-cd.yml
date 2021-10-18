@@ -2,7 +2,7 @@ name: GitHub Actions CD
 on:
   push:
     tags:
-      - '*'
+      - "*"
   workflow_dispatch:
 
 jobs:
@@ -44,28 +44,28 @@ jobs:
         with:
           name: tagged_release
 
-    - name: copy file via scp
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.SERVER_URL }}
-        username: ${{ secrets.SERVER_LOGIN }}
-        port: 22
-        key: ${{ secrets.PEM }}
-        source: "./${{ needs.set_variables.outputs.build_name }}.jar"
-        target: "test"
+      - name: copy file via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_URL }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          port: 22
+          key: ${{ secrets.PEM }}
+          source: "./${{ needs.set_variables.outputs.build_name }}.jar"
+          target: "test"
 
   restart_service:
     needs: [set_variables, copy_new_jar]
-    - name: restart service
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_URL }}
-        username: ${{ secrets.SERVER_LOGIN }}
-        key: ${{ secrets.PEM }}
-        port: 22
-        script: |
-                  sudo service petclinic@groupe1 stop
-                  sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
-                  sud service start
-
-      
+    runs-on: ubuntu-latest
+    steps:
+      - name: restart service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_URL }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          key: ${{ secrets.PEM }}
+          port: 22
+          script: |
+            sudo service petclinic@groupe1 stop
+            sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
+            sud service start
