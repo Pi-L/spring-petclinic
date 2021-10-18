@@ -9,6 +9,12 @@ jobs:
           JF_ARTIFACTORY_1: ${{ secrets.JFROG_TOKEN }}
 
       - run: jfrog rt dl --sort-by=created --sort-order=desc --limit=1 pet-klinik latest-release.jar
-      - run: echo "${{ secrets.PEM }}" > ./key.pem
-      - run: chmod 600 ./key.pem
-      - run: scp -i ./key.pem latest-release.jar group1@cda.cefim-formation.org:~/test/
+
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_URL }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          key: ${{ secrets.PEM }}
+          source: "./latest-release.jar"
+          target: "~/test/"
