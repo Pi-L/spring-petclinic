@@ -28,4 +28,4 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           key: ${{ secrets.PEM }}
           port: 22
-          script: ls -la
+          script: sudo service petclinic restart
