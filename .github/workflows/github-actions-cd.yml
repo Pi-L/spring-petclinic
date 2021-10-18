@@ -33,7 +33,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: tagged_release
-          path: ./"${{ needs.set_variables.outputs.build_name }}.jar"
+          path: ./${{ needs.set_variables.outputs.build_name }}.jar
 
   copy_new_jar:
     needs: [set_variables, download_from_artifactory]
@@ -51,7 +51,7 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           port: 22
           key: ${{ secrets.PEM }}
-          source: "./${{ needs.set_variables.outputs.build_name }}.jar"
+          source: ./${{ needs.set_variables.outputs.build_name }}.jar
           target: "test"
 
   restart_service:
