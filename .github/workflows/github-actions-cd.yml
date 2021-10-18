@@ -66,6 +66,6 @@ jobs:
           key: ${{ secrets.PEM }}
           port: 22
           script: |
-            sudo service petclinic@groupe1 stop
-            sudo mv "~/test/${{ needs.set_variables.outputs.build_name }}.jar" ~/petclinik.jar
-            sud service start
+            sudo service petclinic@group1 stop
+            sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar
+            sudo service petclinic@group1 start
