@@ -7,6 +7,7 @@ on:
 
 jobs:
   set_variables:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     outputs:
       build_name: ${{ steps.setbuildname.outputs.build_name }}
@@ -66,6 +67,4 @@ jobs:
           key: ${{ secrets.PEM }}
           port: 22
           script: |
-            sudo service petclinic@group1 stop
-            sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar
-            sudo service petclinic@group1 start
+            sudo service petclinic@group1 stop && sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar && sudo systemctl daemon-reload && sudo service petclinic@group1 start
