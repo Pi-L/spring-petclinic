@@ -37,7 +37,6 @@ jobs:
 
   copy_new_jar:
     needs: [set_variables, download_from_artifactory]
-    environment: prd
     runs-on: ubuntu-latest
     steps:
       - name: get jar file cache
@@ -58,6 +57,7 @@ jobs:
   restart_service:
     needs: [set_variables, copy_new_jar]
     runs-on: ubuntu-latest
+    environment: prd
     steps:
       - name: restart service
         uses: appleboy/ssh-action@master
