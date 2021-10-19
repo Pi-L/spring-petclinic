@@ -2,6 +2,8 @@ name: GitHub Actions CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
 jobs:
   set_variables:
     runs-on: ubuntu-latest
