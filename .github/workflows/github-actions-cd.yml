@@ -37,6 +37,7 @@ jobs:
 
   copy_new_jar:
     needs: [set_variables, download_from_artifactory]
+    environment: prd
     runs-on: ubuntu-latest
     steps:
       - name: get jar file cache
@@ -65,5 +66,4 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           key: ${{ secrets.PEM }}
           port: 22
-          script: |
-            sudo service petclinic@group1 stop && sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar && sudo systemctl daemon-reload && sudo service petclinic@group1 start
+          script: sudo service petclinic@group1 stop && sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar && sudo systemctl daemon-reload && sudo service petclinic@group1 start
