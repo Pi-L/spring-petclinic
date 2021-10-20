@@ -54,7 +54,7 @@ jobs:
           source: ./${{ needs.set_variables.outputs.build_name }}.jar
           target: "test"
 
-  restart_service:
+  deploy:
     needs: [set_variables, copy_new_jar]
     runs-on: ubuntu-latest
     environment: prd
@@ -67,3 +67,5 @@ jobs:
           key: ${{ secrets.PEM }}
           port: 22
           script: sudo service petclinic@group1 stop && sudo mv ./test/${{ needs.set_variables.outputs.build_name }}.jar ./petclinik.jar && sudo systemctl daemon-reload && sudo service petclinic@group1 start
+# check actions in JS
+# echo "v1.101-prd" | sed -E 's/v[0-9]+\.[0-9]{3}-(\w+)/\1/'
