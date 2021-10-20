@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('CACHE') {
             steps {
@@ -17,7 +17,7 @@ pipeline {
                 }
                 stage ('Build') {
                     steps {
-                        sh('./mvnw clean install -DskipTests')
+                        sh('./mvnw package -DskipTests')
                     }
                 }
             }
