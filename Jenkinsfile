@@ -1,9 +1,24 @@
 pipeline {
     agent any
     stages {
-        stage('Example') {
+        stage('TEST_BUILD') {
+            parallel {
+                stage ('Tests') {
+                    steps {
+                        sh('./mvnw test')
+                    }
+                }
+                stage ('Build') {
+                    steps {
+                        sh('./mvnw clean install -DskipTests')
+                    }
+                }
+            }
+        }
+
+        stage('DEPLOY') {
             steps {
-                sh('ls -la')
+                sh('echo "DEPLOY"')
             }
         }
     }
