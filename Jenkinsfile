@@ -1,6 +1,13 @@
 pipeline {
     agent any
+    
     stages {
+        stage('CACHE') {
+            steps {
+                sh('./mvnw dependency:go-offline')
+            }
+        }
+
         stage('TEST_BUILD') {
             parallel {
                 stage ('Tests') {
