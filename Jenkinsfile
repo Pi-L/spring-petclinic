@@ -23,9 +23,20 @@ pipeline {
             }
         }
 
-        stage('DEPLOY') {
+        stage('Upload release') {
             steps {
-                sh('echo "DEPLOY"')
+                rtUpload (
+                    // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
+                    serverId: SERVER_ID,
+                    spec: """{
+                            "files": [
+                                    {
+                                        "pattern": "./target/spring-petclinic-2.5.0-SNAPSHOT.jar",
+                                        "target": "pet-klinik/petklinik_jfrog.jar"
+                                    }
+                                ]
+                            }"""
+                )
             }
         }
     }
