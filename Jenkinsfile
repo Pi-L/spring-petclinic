@@ -12,7 +12,7 @@ pipeline {
             parallel {
                 stage ('Tests') {
                     steps {
-                        sh('./mvnw test')
+                        sh('./mvnw test -Djacoco.skip=true')
                     }
                 }
                 stage ('Build') {
