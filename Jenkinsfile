@@ -27,12 +27,12 @@ pipeline {
             steps {
                 rtUpload (
                     // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
-                    serverId: SERVER_ID,
+                    serverId: "pil",
                     spec: """{
                             "files": [
                                     {
                                         "pattern": "./target/spring-petclinic-2.5.0-SNAPSHOT.jar",
-                                        "target": "pet-klinik/petklinik_jfrog.jar"
+                                        "target": "pet-klinik/petklinik_jenkins_${GIT_COMMIT.substring(0,8)}.jar"
                                     }
                                 ]
                             }"""
