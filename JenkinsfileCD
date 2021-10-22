@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('download') {
+            rtDownload(
+                // Obtain an Artifactory server instance, defined in Jenkins --> Manage Jenkins --> Configure System:
+                serverId: "pil",
+                spec: """{
+                        "files": [
+                                {
+                                    "pattern": "pet-klinik/petklinik_jenkins_${GIT_COMMIT.substring(0,8)}.jar",
+                                    "target": "/"
+                                }
+                            ]
+                        }"""
+                )
+        }
+
+        stage('TEST_BUILD') {
+            parallel {
+                stage ('Tests') {
+                    steps {
+                        sh('./mvnw test -Djacoco.skip=true')
+                    }
+                }
+                stage ('Build') {
+                    steps {
+                        sh('./mvnw package -DskipTests -Djacoco.skip=true')
+                    }
+                }
+            }
+        }
+
+        stage('deploy') {
+            steps {
+                
+            }
+        }
+    }
+}
